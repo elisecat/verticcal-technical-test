@@ -1,0 +1,31 @@
+name: Backport Release to Develop
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  backport:
+    if: github.event.pull_request.base.ref == 'main' && github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create backport branch
+        run: |
+          git fetch origin
+          git checkout -b backport-${{ github.event.pull_request.head.ref }} origin/develop
+          git cherry-pick -x $(git merge-base origin/main HEAD)..HEAD
+          git push origin backport-${{ github.event.pull_request.head.ref }}
+
+      - name: Create a pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base develop \
+            --head backport-${{ github.event.pull_request.head.ref }} \
+            --title "Backport: ${{ github.event.pull_request.title }}" \
+            --body "Este es un backport automático de ${{ github.event.pull_request.title }} a develop."
