@@ -6,3 +6,4 @@ httpx
 pydantic
 alembic
 requests
+python-dotenv
