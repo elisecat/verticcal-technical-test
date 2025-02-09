@@ -1,5 +1,3 @@
-# Documentación del Proyecto: Verticcal Technical Test
-
 ## 1. Información General
 
 **Nombre:** Verticcal Technical Test  
